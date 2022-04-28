@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import {Link} from "react-router-dom";
+import {connect} from "react-redux";
 import ActionGames from "../../store/actions/actionGames";
 import tableAction from "../../store/actions/actionTable";
 import Nav from "./nav";
-import Table from "../../components/moleculs/table";
-import ShipsTouch from "../../components/moleculs/shipsTouch";
-import { NUMBER_OF_SHIPS, SHIP_ORIENTATION } from "../../constants/ships";
-
+import Table from "../../components/molecules/table";
+import ShipsTouch from "../../components/molecules/shipsTouch";
+import {NUMBER_OF_SHIPS, SHIP_ORIENTATION} from "../../constants/ships";
 
 const StartScreen = (props) => {
   const {
@@ -52,7 +51,7 @@ const StartScreen = (props) => {
     }
   }, [shipsPlayerCount, playerName, savedPlayerShip]);
 
-  const saveShip = async (position) => {
+  const saveShip = async(position) => {
     if (!!shipSelected) {
       const shipData = {
         row: position.row,
@@ -78,12 +77,16 @@ const StartScreen = (props) => {
     updatePlayerName(name);
   };
 
-  const disableButtonOpacity = () => loadShipSelector ? 0.5 : 0;
-  const startGameButtonOpacity = () => start ? 1 : disableButtonOpacity;
+  const disableButtonOpacity = () => loadShipSelector
+    ? 0.5
+    : 0;
+  const startGameButtonOpacity = () => start
+    ? 1
+    : disableButtonOpacity;
 
   return (
     <div>
-      <div>
+      <div style={{ paddingBottom: 30 }}>
         {loadShipSelector
           ? (
             <p>
@@ -94,7 +97,7 @@ const StartScreen = (props) => {
             Please enter you Name
           </p>}
       </div>
-      <div>
+      <div className="container">
         {loadShipSelector && (<ShipsTouch
           shipSaved={savedPlayerShip}
           carriers={carriersAvailable}
@@ -103,8 +106,8 @@ const StartScreen = (props) => {
           selectShip={(ship) => setShipSelected(ship)}
           selectOrientation={(value) => setOrientation(value)}
           restartSavedPlayerShip=
-          {() => resetSavedPlayerShip()} />)}
-        <div>
+          {() => resetSavedPlayerShip()}/>)}
+        <div className="boardContainer">
           <Table
             cpu={false}
             board={playerBoard}
@@ -112,11 +115,11 @@ const StartScreen = (props) => {
             onClickBoard=
             {(position) => saveShip(position)}
             shipSelected={shipSelected}
-            shipOrientatio={orientation} />
+            shipOrientation={orientation}/>
         </div>
         <div>
           {!loadShipSelector && (
-            <form onSubmit={handleOnSubmit}>
+            <form onSubmit={handleOnSubmit} className='form'>
               <input
                 onChange={handleOnChange}
                 className="form-control"
@@ -124,16 +127,18 @@ const StartScreen = (props) => {
                 name="Player name"
                 placeholder="Player name"
                 style={{
-                  height: 30
-                }} />
-              <button type="submit" value="Submit" />
+                height: 30
+              }}/>
+              <button type="submit" value="Submit" className="button"/>
             </form>
           )}
           <Link to="/game">
             <button
-              style={{ opacity: startGameButtonOpacity }}
-              // disabled={!start}
-            >
+              className="button"
+              style={{
+              opacity: startGameButtonOpacity
+            }}
+              disabled={!start}>
               Start Game
             </button>
           </Link>

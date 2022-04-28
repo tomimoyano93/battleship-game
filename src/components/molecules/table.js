@@ -36,7 +36,7 @@ const Table = (props) => {
   const getTable = () => {
     let mark;
     const updatedBoard = table.map((row, x) => (
-      <div key={x.toString()}>
+      <div key={x.toString()} className="row">
         {row.map((column, y) => {
           mark = positionToMark.length > 0 && positionToMark.findIndex((pos) => pos.row === x && pos.col === y) !== -1;
           return (
@@ -57,7 +57,7 @@ const Table = (props) => {
   };
 
   return (
-    <div>
+    <div className="container1">
       {getTable()}
     </div>
   );

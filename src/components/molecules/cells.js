@@ -33,7 +33,7 @@ const Cells = (props) => {
   };
 
   return(
-      <div color ={cellColor()} onMouseOver={()=>onMouseOver()} onClick={()=>handleOnClick()}/>
+      <div color ={cellColor()} onMouseOver={()=>onMouseOver()} onClick={()=>handleOnClick()} className="cell"/>
   );
 };
 

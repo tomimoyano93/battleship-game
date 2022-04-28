@@ -5,9 +5,8 @@ import PropTypes from 'prop-types';
 import ActionGames from "../../store/actions/actionGames";
 import tableAction from "../../store/actions/actionTable";
 import Nav from "../start-screen/nav";
-import Table from "../../components/moleculs/table";
-import ShipsTouch from "../../components/moleculs/shipsTouch";
-
+import Table from "../../components/molecules/table";
+import ShipsTouch from "../../components/molecules/shipsTouch";
 
 const GameScreen = (props) => {
   const {
@@ -62,7 +61,6 @@ const GameScreen = (props) => {
     if (updatedPlayerBoard && currentPlayer === 'CPU') {
       changeTurn();
     }
-    // eslint-disable-next-line
   }, [currentPlayer, updatedPlayerBoard]);
 
   const handleClickBoard = (position) => {
@@ -124,7 +122,9 @@ const GameScreen = (props) => {
 };
 
 GameScreen.propTypes = {
-  playerBoard: PropTypes.arrayOf(PropTypes.array.isRequired).isRequired,
+  playerBoard: PropTypes
+    .arrayOf(PropTypes.array.isRequired)
+    .isRequired,
   cpuBoard: PropTypes
     .arrayOf(PropTypes.array.isRequired)
     .isRequired,

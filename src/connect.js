@@ -5,7 +5,7 @@ import GameScreen from "./screens/game-screen/gameScreen";
 import StarScreen from "./screens/start-screen/startScreen";
 
 
-const AplicationRouter = () => (
+const ApplicationRouter = () => (
     <BrowserRouter>
         <Routes>
             <Route exact path="/" element={<StarScreen/>} />
@@ -15,4 +15,4 @@ const AplicationRouter = () => (
     </BrowserRouter>
 );
 
-export default AplicationRouter;
+export default ApplicationRouter;

@@ -36,3 +36,94 @@
     transform: rotate(360deg);
   }
 }
+
+.container {
+  display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: stretch;
+    align-content: stretch;
+
+    @media screen and (max-width: 480px) {
+        flex-direction: column;
+        align-items: center;
+        align-content: center;
+    }
+}
+
+.form{
+  flex-direction: column; 
+    margin-top: 45%;
+    margin-left: 25px;
+
+    @media screen and (max-width: 480px) {
+        margin-top: 50%;
+        margin-left: 0px;
+    }
+}
+
+.boardContainer{
+  flex-direction: column;
+} 
+
+.container1{
+  width: 410px;
+    height: 410px;
+    border: 2px solid black;
+
+    @media screen and (max-width: 480px) {
+        width: 200px;
+        height: 200px;
+        border: 0px;
+        margin-left: -32vw;
+    }
+}
+
+.cell{
+  width: 39px;
+    height: 39px;
+    border: 1px solid black;
+    background-color: white;
+
+    @media screen and (max-width: 480px) {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+.row {
+  display: flex;
+    flex-direction: row;
+}
+
+.Container2 {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    height: 500px;
+    border: 11px solid rgb(3,3,65,1);
+    background-color: rgb(2,2,120,0.9);
+    margin-right: 50px;
+
+    @media screen and (max-width: 480px) {
+        width: 300px;
+        height: 400px;
+        margin-right: 0px;
+        margin-top: 50vh;
+        margin-bottom: 10vh;
+    }
+}
+
+.button{
+  height: 50px; 
+  width: 150px; 
+  margin-left: 50px; 
+  background-color: #144205; 
+  color: white;
+
+  @media screen and (max-width: 480px) {
+      width: 100px;
+      margin-left: 10px;
+  }
+}
