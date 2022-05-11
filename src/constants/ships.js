@@ -1,50 +1,48 @@
-export const BOARD_SIZE = 10;
+export const LENGTH_BOARD = 10;
 
-export const SHIP_TYPES_CARRIER = {
-  name: 'Carrier',
-  id: 1,
-  size: 4
-}
+export const SHIP_TYPE_CARRIER = {
+  id: 4,
+  size: 4,
+};
 
-export const SHIP_TYPES_CRUISER = {
-  name: 'Cruiser',
-  id: 2,
-  size: 3
-}
+export const SHIP_TYPE_CRUISER = {
+  id: 5,
+  size: 3,
+};
 
-export const SHIP_TYPES_SUBMARINE = {
-  name: 'Submarine',
-  id: 3,
-  size: 2
-}
-export const SHIP_TYPES_ID = {
-  CARRIER: 1,
-  CRUISER: 2,
-  SUBMARINE: 3
-}
-export const CELL_VALUE = {
-  EMPTY: 0,
-  MISS: 1,
-  HIT: 2,
-  DESTROY: 3
-}
+export const SHIP_TYPE_SUBMARINE = {
+  id: 6,
+  size: 2,
+};
 
-export const NUMBER_OF_SHIPS = {
+export const SHIP_TYPE_ID = {
+  CARRIER: 4,
+  CRUISER: 5,
+  SUBMARINE: 6,
+};
+
+export const NUMBER_OF_SHIP = {
   CARRIER: 1,
   CRUISER: 3,
   SUBMARINE: 1,
-  FINAL:5,
-}
-
+  TOTAL: 5,
+};
 
 export const DIRECTION = {
-  UP: 'up',
-  DOWN: 'down',
-  RIGHT: 'right',
-  LEFT: 'left'
-}
+  UP: 'UP',
+  RIGHT: 'RIGHT',
+  DOWN: 'DOWN',
+  LEFT: 'LEFT',
+};
+
+export const CELL_ID_VALUE = {
+  DEFAULT: 0,
+  WATER: 1,
+  HIT: 2,
+  DESTROYED: 3,
+};
 
 export const SHIP_ORIENTATION = {
   HORIZONTAL: 0,
   VERTICAL: 1,
-}
+};

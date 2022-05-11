@@ -1,52 +1,47 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {CELL_VALUE} from "../../constants/ships";
+import React from 'react';
+import { CELL_ID_VALUE } from '../../constants/ships';
+import {CellDiv} from './styles';
+
 
 const Cells = (props) => {
-  const {id, mark, ship, onClick, onMouseOver} = props;
+  const {
+    id, mark, showShip, onMouseHover, onClick,
+  } = props;
 
-  const cellColor = () => {
+  const getCellColor = () => {
     if (mark) {
-      return '9C9B9A';
+      return '#9C9B9A';
     }
     switch (id) {
-      case CELL_VALUE.EMPTY:
-        return 'grey';
-      case CELL_VALUE.MISS:
-        return 'blue';
-      case CELL_VALUE.HIT:
-        return 'orange';
-      case CELL_VALUE.DESTROY:
+      case CELL_ID_VALUE.DEFAULT:
+        return 'white';
+      case CELL_ID_VALUE.WATER:
+        return '#0077B3';
+      case CELL_ID_VALUE.HIT:
+        return '#FF9933';
+      case CELL_ID_VALUE.DESTROYED:
         return 'red';
       default:
-        if (!ship) {
+        if (!showShip) {
           return 'grey';
-        }
-        return 'white';
+        } return 'white';
     }
   };
 
   const handleOnClick = () => {
-      if (!(id === CELL_VALUE.MISS || id === CELL_VALUE.HIT || id === CELL_VALUE.DESTROY)) {
-        onClick();
-      }
+    if (!(id === CELL_ID_VALUE.WATER || id === CELL_ID_VALUE.HIT || id === CELL_ID_VALUE.DESTROYED)) {
+      onClick();
+    }
   };
 
-  return(
-      <div color ={cellColor()} onMouseOver={()=>onMouseOver()} onClick={()=>handleOnClick()} className="cell"/>
+  return (
+    <CellDiv color={getCellColor()} onMouseOver={() => onMouseHover()} onClick={() => handleOnClick()} className="cell" style={{backgroundColor: '(props) => (props.color ? props.color : mark'}}/>
   );
 };
 
-Cells.propTypes = {
-    id: PropTypes.number.isRequired,
-    mark: PropTypes.bool.isRequired,
-    ship: PropTypes.bool.isRequired,
-    onMouseOver: PropTypes.func.isRequired,
-    onClick: PropTypes.func.isRequired,
-};
 
 Cells.defaultProps = {
-    mark:false,
-}
+  mark: false,
+};
 
 export default Cells;

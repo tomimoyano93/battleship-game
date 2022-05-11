@@ -1,12 +1,11 @@
-import React, {useEffect, useState} from "react";
-import {Link, Route} from "react-router-dom";
-import {connect} from "react-redux";
-import PropTypes from 'prop-types';
-import ActionGames from "../../store/actions/actionGames";
-import tableAction from "../../store/actions/actionTable";
-import Nav from "../start-screen/nav";
-import Table from "../../components/molecules/table";
-import ShipsTouch from "../../components/molecules/shipsTouch";
+import React, { useState, useEffect } from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import { connect } from 'react-redux';
+import BoardActions from '../../store/actions/actionTable';
+import GameActions from '../../store/actions/actionGames';
+import Screen from '../../screens/screen';
+import Table from '../../components/molecules/table'; 
+import {GameContainer, GameCpuContainer, AllButton, Label, Feedback, ButtonContainer} from '../screenStyles'
 
 const GameScreen = (props) => {
   const {
@@ -22,10 +21,10 @@ const GameScreen = (props) => {
     playerAttack,
     cpuAttack,
     updateCurrentPlayer,
-    updateWinner
+    updateWinner,
   } = props;
-  const [finishGame,
-    setFinishGame] = useState(false);
+  const [finishGame, setFinishGame] = useState(false);
+
   const checkWinner = () => {
     if (shipsCpuCount === 0) {
       updateWinner(playerName);
@@ -69,95 +68,78 @@ const GameScreen = (props) => {
       setTimeout(setTurn, 1000);
     }
   };
-  const renderContent = () => (finishGame
-    ? <Route to="/end" push/>
-    : (
-      <div>
-        <Route>
-          <div style={{
-            flexDirection: 'column'
-          }}>
-            <div style={{
-              paddingBottom: 10
-            }}>
-              <p>{playerName}</p>
-            </div>
-            <Table cpu={false} click={false} table={playerBoard}/>
-          </div>
-          <Route>
-            <div style={{
-              paddingBottom: 10
-            }}>
-              <p>CPU</p>
-            </div>
-            <Table
-              cpu
-              click
-              board={cpuBoard}
-              onClickBoard={(position) => handleClickBoard(position)}/>
-          </Route>
-        </Route>
+
+  const renderContent = () => (
+    finishGame ? <Navigate to="/end" push/>
+      : (
         <div>
-          <div>
-            <p size="1.4em">
-              {attemptFeedback}
-            </p>
-          </div>
-          <div>
-            <p size="1.4em">
-              Playing: {' '}
-              {currentPlayer}
-            </p>
-            <Link to="/end">
-              <div>
-                Surrender
+          <GameContainer>
+            <div style={{ flexDirection: 'column' }}>
+              <div style={{ paddingBottom: 10 }}>
+                <Label>{playerName}</Label>
               </div>
-            </Link>
+              <Table cpu={false} click={false} board={playerBoard} />
+            </div>
+            <GameCpuContainer>
+              <div style={{ paddingBottom: 10 }}>
+                <label>CPU</label>
+              </div>
+              <Table cpu click board={cpuBoard} onClickBoard={(position) => handleClickBoard(position)}/>
+            </GameCpuContainer>
+          </GameContainer>
+          <div>
+            <Feedback>
+              <Label size="1.4em">
+                {attemptFeedback}
+              </Label>
+            </Feedback>
+            <ButtonContainer>
+              <Label size="1.4em">
+                Playing:
+                {' '}
+                {currentPlayer}
+              </Label>
+              <Link to="/end">
+                <AllButton>
+                  Surrender
+                </AllButton>
+              </Link>
+            </ButtonContainer>
           </div>
         </div>
-      </div>
-    ));
+      )
+  );
 
-  return (<Nav content={renderContent()}/>);
+  return (
+    <Screen
+      content={
+        renderContent()
+      }
+    />
+  );
 };
 
-GameScreen.propTypes = {
-  playerBoard: PropTypes
-    .arrayOf(PropTypes.array.isRequired)
-    .isRequired,
-  cpuBoard: PropTypes
-    .arrayOf(PropTypes.array.isRequired)
-    .isRequired,
-  updatedPlayerBoard: PropTypes.bool.isRequired,
-  shipsCpuCount: PropTypes.number.isRequired,
-  shipsPlayerCount: PropTypes.number.isRequired,
-  attemptFeedback: PropTypes.string.isRequired,
-  playerName: PropTypes.string.isRequired,
-  currentPlayer: PropTypes.string.isRequired,
-  initCpuBoard: PropTypes.func.isRequired,
-  playerAttack: PropTypes.func.isRequired,
-  cpuAttack: PropTypes.func.isRequired,
-  updateCurrentPlayer: PropTypes.func.isRequired,
-  updateWinner: PropTypes.func.isRequired
-};
 
 const mapStateToProps = (state) => ({
-  playerBoard: state.table.playerBoard,
-  cpuBoard: state.table.cpuBoard,
-  updatedPlayerBoard: state.table.updatedPlayerBoard,
-  shipsCpuCount: state.table.shipsCpuCount,
-  shipsPlayerCount: state.table.shipsPlayerCount,
-  attemptFeedback: state.table.attemptFeedback,
+  playerBoard: state.board.playerBoard,
+  cpuBoard: state.board.cpuBoard,
+  updatedPlayerBoard: state.board.updatedPlayerBoard,
+  shipsCpuCount: state.board.shipsCpuCount,
+  shipsPlayerCount: state.board.shipsPlayerCount,
+  attemptFeedback: state.board.attemptFeedback,
   playerName: state.game.playerName,
-  currentPlayer: state.game.currentPlayer
+  currentPlayer: state.game.currentPlayer,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  initCpuBoard: () => dispatch(tableAction.initCpuBoard()),
-  playerAttack: (args) => dispatch(tableAction.playerAttack(args)),
-  cpuAttack: () => dispatch(tableAction.cpuAttack()),
-  updateCurrentPlayer: () => dispatch(ActionGames.updateCurrentPlayer()),
-  updateWinner: (args) => dispatch(tableAction.updateWinner(args))
+  initCpuBoard: () => dispatch(BoardActions.initCpuBoard()),
+  playerAttack: (args) => dispatch(BoardActions.playerAttack(args)),
+  cpuAttack: () => dispatch(BoardActions.cpuAttack()),
+  updateCurrentPlayer: () => dispatch(GameActions.updateCurrentPlayer()),
+  updateWinner: (args) => dispatch(GameActions.updateWinner(args)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(GameScreen);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(GameScreen);

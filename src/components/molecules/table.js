@@ -1,28 +1,28 @@
-import React, {useState} from "react";
-import PropTypes from "prop-types";
-import Utils from "../../constants/Utils";
-import Cells from "./cells";
+import React, {useState} from 'react';
+import Utils from '../../constants/Utils';
+import Cells from './cells';
+
 
 const Table = (props) => {
   const {
     cpu,
     click,
-    table,
-    ships,
+    board,
+    shipSelected,
     shipOrientation,
     onClickBoard
   } = props;
-  const [positionToMark,
-    setPositionToMark] = useState([]);
+  const [positionsToMark,
+    setPositionsToMark] = useState([]);
 
-  const markPosition = (row, col) => {
-    setPositionToMark([]);
-    if (ships) {
-      const position = Utils.getPosition(table, ships.size, row, col, shipOrientation);
-      if (position) {
-        setPositionToMark(position);
+  const markPositions = (row, col) => {
+    setPositionsToMark([]);
+    if (shipSelected) {
+      const positions = Utils.getShipPositions(board, shipSelected.size, row, col, shipOrientation);
+      if (positions) {
+        setPositionsToMark(positions);
       } else {
-        setPositionToMark([]);
+        setPositionsToMark([]);
       }
     }
   };
@@ -33,19 +33,19 @@ const Table = (props) => {
     }
   };
 
-  const getTable = () => {
+  const getBoard = () => {
     let mark;
-    const updatedBoard = table.map((row, x) => (
+    const updatedBoard = board.map((row, x) => (
       <div key={x.toString()} className="row">
         {row.map((column, y) => {
-          mark = positionToMark.length > 0 && positionToMark.findIndex((pos) => pos.row === x && pos.col === y) !== -1;
+          mark = positionsToMark.length > 0 && positionsToMark.findIndex((pos) => pos.row === x && pos.col === y) !== -1;
           return (
             <div key={y.toString()}>
               <Cells
                 showShip={cpu}
-                code={table[x][y].code}
-                id={table[x][y].id}
-                onMouseHover={() => markPosition(x, y)}
+                code={board[x][y].code}
+                id={board[x][y].id}
+                onMouseHover={() => markPositions(x, y)}
                 mark={mark}
                 onClick={() => handleOnClick(x, y)}/>
             </div>
@@ -57,28 +57,16 @@ const Table = (props) => {
   };
 
   return (
-    <div className="container1">
-      {getTable()}
+    <div className='container1'>
+      {getBoard()}
     </div>
   );
 };
 
-Table.propTypes = {
-    cpu: PropTypes.bool.isRequired,
-    click: PropTypes.bool.isRequired,
-    table: PropTypes
-    .arrayOf(PropTypes.array.isRequired)
-    .isRequired,
-    ships: PropTypes.element,
-    shipOrientation: PropTypes.number,
-    onClickBoard: PropTypes.func,
-};
-
 Table.defaultProps = {
-    ships: null,
-    table: [],
-    shipOrientation: null,
-    onClickBoard: () => {},
-}
+  shipSelected: null,
+  shipOrientation: null,
+  onClickBoard: () => {}
+};
 
 export default Table;

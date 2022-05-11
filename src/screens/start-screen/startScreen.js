@@ -1,13 +1,14 @@
-import React, {useEffect, useState} from "react";
-import PropTypes from "prop-types";
-import {Link} from "react-router-dom";
-import {connect} from "react-redux";
-import ActionGames from "../../store/actions/actionGames";
-import tableAction from "../../store/actions/actionTable";
-import Nav from "./nav";
-import Table from "../../components/molecules/table";
-import ShipsTouch from "../../components/molecules/shipsTouch";
-import {NUMBER_OF_SHIPS, SHIP_ORIENTATION} from "../../constants/ships";
+/* eslint-disable react-hooks/exhaustive-deps, no-alert */
+import React, {useState, useEffect} from 'react';
+import {Link} from 'react-router-dom';
+import {connect} from 'react-redux';
+import BoardActions from '../../store/actions/actionTable';
+import GameActions from '../../store/actions/actionGames';
+import Screen from '../../screens/screen';
+import Table from '../../components/molecules/table';
+import ShipTouch from '../../components/molecules/shipsTouch';
+import {NUMBER_OF_SHIP, SHIP_ORIENTATION} from '../../constants/ships';
+import {Label, StartDiv, TableDiv, AllButton, Input, TableDiv2} from '../screenStyles'
 
 const StartScreen = (props) => {
   const {
@@ -40,7 +41,7 @@ const StartScreen = (props) => {
 
   useEffect(() => {
     const handleStart = () => {
-      if (shipsPlayerCount === NUMBER_OF_SHIPS && playerName !== '') {
+      if (shipsPlayerCount === NUMBER_OF_SHIP.TOTAL && playerName) {
         setStart(true);
       }
     };
@@ -61,9 +62,10 @@ const StartScreen = (props) => {
       };
       await updatePlayerBoard(shipData);
     } else {
-      alert('Please select a ship');
+      alert('Please select a ship!');
     }
   };
+
   const resetSavedPlayerShip = () => {
     restartSavedPlayerShip();
   };
@@ -77,105 +79,94 @@ const StartScreen = (props) => {
     updatePlayerName(name);
   };
 
-  const disableButtonOpacity = () => loadShipSelector
-    ? 0.5
-    : 0;
-  const startGameButtonOpacity = () => start
-    ? 1
-    : disableButtonOpacity;
-
-  return (
-    <div>
-      <div style={{ paddingBottom: 30 }}>
-        {loadShipSelector
-          ? (
-            <p>
-              Hi {name}!, please select your ships
-            </p>
-          )
-          : <p>
-            Please enter you Name
-          </p>}
-      </div>
-      <div className="container">
-        {loadShipSelector && (<ShipsTouch
-          shipSaved={savedPlayerShip}
-          carriers={carriersAvailable}
-          cruisers={cruisersAvailable}
-          submarines={submarinesAvailable}
-          selectShip={(ship) => setShipSelected(ship)}
-          selectOrientation={(value) => setOrientation(value)}
-          restartSavedPlayerShip=
-          {() => resetSavedPlayerShip()}/>)}
-        <div className="boardContainer">
-          <Table
-            cpu={false}
-            board={playerBoard}
-            click
-            onClickBoard=
-            {(position) => saveShip(position)}
-            shipSelected={shipSelected}
-            shipOrientation={orientation}/>
+  const renderContent = () => {
+    const disableButtonOpacity = loadShipSelector
+      ? 0.6
+      : 0;
+    const startGameButtonOpacity = start
+      ? 1
+      : disableButtonOpacity;
+    return (
+      <div>
+        <div style={{
+          paddingBottom: 30
+        }}>
+          {loadShipSelector
+            ? (
+              <Label>
+                Hi {' '}
+                {name}
+                , please locate your ships!
+              </Label>
+            )
+            : <Label>Please enter your name!</Label>}
         </div>
-        <div>
-          {!loadShipSelector && (
-            <form onSubmit={handleOnSubmit} className='form'>
-              <input
-                onChange={handleOnChange}
-                className="form-control"
-                type="text"
-                name="Player name"
-                placeholder="Player name"
+        <StartDiv>
+          {loadShipSelector && (<ShipTouch
+            shipSaved={savedPlayerShip}
+            carriers={carriersAvailable}
+            cruisers={cruisersAvailable}
+            submarines={submarinesAvailable}
+            selectShip={(ship) => setShipSelected(ship)}
+            selectOrientation={(value) => setOrientation(value)}
+            restartSavedPlayerShip={() => resetSavedPlayerShip()}/>)}
+          <TableDiv>
+            <Table
+              cpu={false}
+              board={playerBoard}
+              click
+              onClickBoard={(position) => saveShip(position)}
+              shipSelected={shipSelected}
+              shipOrientation={orientation}/>
+          </TableDiv>
+          <TableDiv2>
+            {!loadShipSelector && (
+              <form onSubmit={handleOnSubmit}>
+                <input
+                  onChange={handleOnChange}
+                  className="form-control"
+                  type="text"
+                  name="Player name"
+                  placeholder="Player name"
+                  style={{
+                  height: 30
+                }}/>
+                <Input type="submit" value="Start Game"/>
+              </form>
+            )}
+            <Link to="/game">
+              <AllButton
                 style={{
-                height: 30
-              }}/>
-              <button type="submit" value="Submit" className="button"/>
-            </form>
-          )}
-          <Link to="/game">
-            <button
-              className="button"
-              style={{
-              opacity: startGameButtonOpacity
-            }}
-              disabled={!start}>
-              Start Game
-            </button>
-          </Link>
-        </div>
+                opacity: startGameButtonOpacity
+              }}
+                disabled={!start}>
+                Start Game
+              </AllButton>
+            </Link>
+          </TableDiv2>
+        </StartDiv>
       </div>
-    </div>
-  );
+    );
+  };
 
+  return (<Screen content={renderContent()}/>);
 };
 
-StartScreen.propTypes = {
-  playerBoard: PropTypes.arrayOf(PropTypes.array.isRequired),
-  carriersAvailable: PropTypes.number.isRequired,
-  cruisersAvailable: PropTypes.number.isRequired,
-  submarinesAvailable: PropTypes.number.isRequired,
-  shipsPlayerCount: PropTypes.number.isRequired,
-  savedPlayerShip: PropTypes.bool.isRequired,
-  playerName: PropTypes.string.isRequired,
-  initPlayerBoard: PropTypes.func.isRequired,
-  updatePlayerBoard: PropTypes.func.isRequired,
-  updatePlayerName: PropTypes.func.isRequired,
-  restartSavedPlayerShip: PropTypes.func.isRequired
-};
 const mapStateToProps = (state) => ({
-  playerBoard: state.table.playerBoard,
-  carriersAvailable: state.table.carriersAvailable,
-  cruisersAvailable: state.table.cruisersAvailable,
-  submarinesAvailable: state.table.submarinesAvailable,
-  shipsPlayerCount: state.table.shipsPlayerCount,
-  savedPlayerShip: state.table.savedPlayerShip,
+  playerBoard: state.board.playerBoard,
+  carriersAvailable: state.board.carriersAvailable,
+  cruisersAvailable: state.board.cruisersAvailable,
+  submarinesAvailable: state.board.submarinesAvailable,
+  shipsPlayerCount: state.board.shipsPlayerCount,
+  savedPlayerShip: state.board.savedPlayerShip,
   playerName: state.game.playerName
 });
+
 const mapDispatchToProps = (dispatch) => ({
-  initPlayerBoard: () => dispatch(tableAction.initPlayerBoard()),
-  updatePlayerBoard: (args) => dispatch(tableAction.updatePlayerBoard(args)),
-  updatePlayerName: (args) => dispatch(ActionGames.updatePlayerName(args)),
-  restartSavedPlayerShip: () => dispatch(tableAction.restartSavedPlayerShip())
+  initPlayerBoard: () => dispatch(BoardActions.initEmptyBoard()),
+  updatePlayerBoard: (args) => dispatch(BoardActions.updatePlayerBoard(args)),
+  updatePlayerName: (args) => dispatch(GameActions.updatePlayerName(args)),
+  restartSavedPlayerShip: () => dispatch(BoardActions.restartSavedPlayerShip())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(StartScreen);
+export default connect(mapStateToProps, mapDispatchToProps,)(StartScreen);

@@ -1,91 +1,84 @@
 import {
-  INIT_CPU_BOARD,
-  PLAYER_ATTACK,
-  INIT_EMPTY_BOARD,
-  UPDATE_PLAYER_BOARD,
-  CPU_ATTACK,
-  RESTART,
-  RESTART_SAVED_PLAYER_SHIP
+  INIT_CPU_BOARD, PLAYER_ATTACK, INIT_EMPTY_BOARD, UPDATE_PLAYER_BOARD, CPU_ATTACK, RESTART, RESTART_SAVED_PLAYER_SHIP,
 } from './action';
-import {SHIP_TYPES_ID, NUMBER_OF_SHIPS} from '../../constants/ships';
-import utils from '../../constants/Utils';
+import { SHIP_TYPE_ID, NUMBER_OF_SHIP } from '../../constants/ships';
+import Utils from '../../constants/Utils';
 
 const initCpuBoard = () => {
-  const {cpuBoard, cpuShips} = utils.cpuBoard();
+  const { cpuBoard, cpuShips } = Utils.initRandomCpuBoard();
   return {
     type: INIT_CPU_BOARD,
     args: {
       cpuBoard,
       cpuShips,
-      shipsCount: NUMBER_OF_SHIPS.FINAL
-    }
+      shipsCpuCount: NUMBER_OF_SHIP.TOTAL,
+    },
   };
 };
 
-const cpuAttack = (dispatch, getState) => {
+const cpuAttack = () => (dispatch, getState) => {
   const state = getState();
   const boardState = state.board;
   const {
-    playerBoard,
-    cpuCoordinatesAttack,
-    cpuDirection,
-    cpuHit,
-    playerShips,
-    playerShipsDestroyed,
-    cpuHasTarget
-  } = utils.cpuAttack(boardState.playerBoard, boardState.cpuCoordinatesAttack, boardState.cpuDirection, boardState.cpuHit, boardState.playerShips, boardState.cpuHasTarget);
-
-  const shipCount = playerShipsDestroyed
-    ? boardState.shipsPlayerCount - 1
-    : boardState.shipsPlayerCount;
+    playerBoard, cpuCoordinatesAttacked, lastCpuDirection, lastCpuHit, playerShips, playerShipDestroyed, cpuHasTarget,
+  } = Utils.cpuAttack(boardState.playerBoard,
+    boardState.cpuCoordinatesAttacked,
+    boardState.lastCpuDirection,
+    boardState.lastCpuHit,
+    boardState.playerShips,
+    boardState.cpuHasTarget);
+  const shipsCount = playerShipDestroyed ? boardState.shipsPlayerCount - 1 : boardState.shipsPlayerCount;
 
   return dispatch({
     type: CPU_ATTACK,
     args: {
       playerBoard,
-      cpuCoordinatesAttack,
-      cpuDirection,
-      cpuHit,
+      cpuCoordinatesAttacked,
+      lastCpuDirection, 
+      lastCpuHit,
       playerShips,
-      shipsPlayerCount: shipCount,
+      shipsPlayerCount: shipsCount,
       updatedPlayerBoard: true,
       cpuHasTarget,
-      attemptFeedback: undefined
-    }
+      attemptFeedback: undefined,
+    },
   });
 };
 
-const initPlayerBoard = () => {
-  const playerBoard = utils.initBoard();
-  return {type: INIT_EMPTY_BOARD, args: {
-      playerBoard
-    }};
+const initEmptyBoard = () => {
+  const playerBoard = Utils.initEmptyBoard();
+  return {
+    type: INIT_EMPTY_BOARD,
+    args: {
+      playerBoard,
+    },
+  };
 };
 
-const playerBoard = (shipData) => (dispatch, getState) => {
+const updatePlayerBoard = (shipData) => (dispatch, getState) => {
   const state = getState();
   const boardState = state.board;
   const code = boardState.shipsPlayerCount;
-  const updatedPlayerBoard = utils.playerBoard(boardState.playerBoard, shipData, code);
-  const {playerShips} = boardState;
+  const updatedPlayerBoard = Utils.updatePlayerBoard(boardState.playerBoard, shipData, code);
+  const { playerShips } = boardState;
   let args;
 
   if (updatedPlayerBoard) {
     const shipsPlayerCount = boardState.shipsPlayerCount + 1;
-    let {carriersAvaialable} = boardState;
-    let {cruisersAvaialable} = boardState;
-    let {submarinesAvaialable} = boardState;
+    let { carriersAvailable } = boardState;
+    let { cruisersAvailable } = boardState;
+    let { submarinesAvailable } = boardState;
     playerShips.push(shipData.ship.size);
 
     switch (shipData.ship.id) {
-      case SHIP_TYPES_ID.CARRIER:
-        carriersAvaialable -= 1;
+      case SHIP_TYPE_ID.CARRIER:
+        carriersAvailable -= 1;
         break;
-      case SHIP_TYPES_ID.CRUISER:
-        cruisersAvaialable -= 1;
+      case SHIP_TYPE_ID.CRUISER:
+        cruisersAvailable -= 1;
         break;
-      case SHIP_TYPES_ID.SUBMARINE:
-        submarinesAvaialable -= 1;
+      case SHIP_TYPE_ID.SUBMARINE:
+        submarinesAvailable -= 1;
         break;
       default:
         break;
@@ -93,60 +86,68 @@ const playerBoard = (shipData) => (dispatch, getState) => {
     args = {
       playerBoard: updatedPlayerBoard,
       shipsPlayerCount,
-      carriersAvaialable,
-      cruisersAvaialable,
-      submarinesAvaialable,
+      carriersAvailable,
+      cruisersAvailable,
+      submarinesAvailable,
       playerShips,
-      savedPlayerShip: true
+      savedPlayerShip: true,
     };
   } else {
     args = {
-      savedPlayerShip: false
+      savedPlayerShip: false,
     };
   }
-  return dispatch({type: UPDATE_PLAYER_BOARD, args});
+  return dispatch({
+    type: UPDATE_PLAYER_BOARD,
+    args,
+  });
 };
 
-const playerAttack = ({row, col}) => (dispatch, getState) => {
+const playerAttack = ({ row, col }) => (dispatch, getState) => {
   const state = getState();
   const boardState = state.board;
-  const {board, hit, shipDestroyed} = utils.attack(boardState.cpuBoard, row, col, boardState.cpuShips);
-  let {shipsCount} = boardState;
-  const {cpuShips} = boardState;
-  let attemptFeedback = 'Miss';
+  const { board, hit, shipDestroyed } = Utils.attack(boardState.cpuBoard, row, col, boardState.cpuShips);
+  let { shipsCpuCount } = boardState;
+  const { cpuShips } = boardState;
+  let attemptFeedback = 'Shot missed!';
   if (hit) {
     const codeShip = boardState.cpuBoard[row][col].code;
     cpuShips[codeShip] -= 1;
-    attemptFeedback = 'Hit';
+    attemptFeedback = 'Ship hit!';
   }
   if (shipDestroyed) {
-    shipsCount -= 1;
-    attemptFeedback = 'Destroy';
+    shipsCpuCount -= 1;
+    attemptFeedback = 'Ship destroyed!';
   }
   return dispatch({
     type: PLAYER_ATTACK,
     args: {
       cpuBoard: board,
-      shipsCount,
+      shipsCpuCount,
       cpuShips,
       updatedPlayerBoard: false,
-      attemptFeedback
-    }
+      attemptFeedback,
+    },
   });
 };
 
-const restart = () => ({type: RESTART});
+const restart = () => ({
+  type: RESTART,
+});
 
-const restartSavedPlayer = () => ({type: RESTART_SAVED_PLAYER_SHIP});
+const restartSavedPlayerShip = () => ({
+  type: RESTART_SAVED_PLAYER_SHIP,
+});
 
-const tableAction = {
+const BoardActions = {
   initCpuBoard,
   cpuAttack,
-  initPlayerBoard,
-  playerBoard,
+  initEmptyBoard,
+  updatePlayerBoard,
   playerAttack,
   restart,
-  restartSavedPlayer
+  restartSavedPlayerShip,
 };
 
-export default tableAction;
+export default BoardActions;
+

@@ -1,10 +1,10 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 import {connect} from 'react-redux';
-import PropTypes from 'prop-types';
-import Nav from '../start-screen/nav';
-import tableAction from '../../store/actions/actionTable';
-import ActionGames from '../../store/actions/actionGames';
+import BoardActions from '../../store/actions/actionTable';
+import GameActions from '../../store/actions/actionGames';
+import Screen from '../../screens/screen';
+import {Label, AllButton, EndGameDiv} from '../screenStyles'
 
 const EndGameScreen = ({winner, resetBoard, restartGame}) => {
   const handleClickRestart = () => {
@@ -14,45 +14,46 @@ const EndGameScreen = ({winner, resetBoard, restartGame}) => {
 
   const renderContent = () => (
     <div>
-      <div>
-        <p>
+      <div style={{
+        flexDirection: 'column'
+      }}>
+        <EndGameDiv>
           {winner
             ? (
-              <p>
+              <Label>
                 {winner}
                 {' '}
                 wins!
-              </p>
+              </Label>
             )
             : (
-              <p>
-                Draw!
-              </p>
+              <Label>
+                You have surrendered
+              </Label>
             )}
-          <Link to="/">
-            <button onCLick={() => handleClickRestart()}>
+          <Link
+            style={{
+            paddingTop: 50,
+            paddingRight: '40px'
+          }}
+            to="/">
+            <AllButton onClick={() => handleClickRestart()}>
               Restart
-            </button>
+            </AllButton>
           </Link>
-        </p>
+        </EndGameDiv>
       </div>
     </div>
   );
 
-  return (<Nav content={renderContent()}/>);
-};
-
-EndGameScreen.propTypes = {
-  winner: PropTypes.string,
-  resetBoard: PropTypes.func,
-  restartGame: PropTypes.func
+  return (<Screen content={renderContent()}/>);
 };
 
 const mapStateToProps = (state) => ({winner: state.game.winner});
 
 const mapDispatchToProps = (dispatch) => ({
-  resetBoard: () => dispatch(tableAction.restart()),
-  restartGame: () => dispatch(ActionGames.restart())
+  resetBoard: () => dispatch(BoardActions.restart()),
+  restartGame: () => dispatch(GameActions.restart())
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(EndGameScreen);
+export default connect(mapStateToProps, mapDispatchToProps,)(EndGameScreen);
