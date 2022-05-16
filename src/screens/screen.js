@@ -1,9 +1,11 @@
 import React from 'react';
 import {Tittle} from './screenStyles'
 
-const Screen = ({ content }) => (
+const Screen = ({content}) => (
   <div>
-    <header>
+    <header style={{
+      margin: '30px 0px 20px 0px'
+    }}>
       <Tittle>
         Battleship
       </Tittle>
@@ -13,6 +15,5 @@ const Screen = ({ content }) => (
     </div>
   </div>
 );
-
 
 export default Screen;

@@ -14,9 +14,7 @@ const EndGameScreen = ({winner, resetBoard, restartGame}) => {
 
   const renderContent = () => (
     <div>
-      <div style={{
-        flexDirection: 'column'
-      }}>
+      <div style={{flexDirection: 'column'}}>
         <EndGameDiv>
           {winner
             ? (
@@ -31,12 +29,7 @@ const EndGameScreen = ({winner, resetBoard, restartGame}) => {
                 You have surrendered
               </Label>
             )}
-          <Link
-            style={{
-            paddingTop: 50,
-            paddingRight: '40px'
-          }}
-            to="/">
+          <Link style={{paddingTop: 50}} to="/">
             <AllButton onClick={() => handleClickRestart()}>
               Restart
             </AllButton>

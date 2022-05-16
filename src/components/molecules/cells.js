@@ -1,12 +1,9 @@
 import React from 'react';
-import { CELL_ID_VALUE } from '../../constants/ships';
-import {CellDiv} from './styles';
-
+import {CELL_ID_VALUE} from '../../constants/ships';
+import {CellComponent} from './styles';
 
 const Cells = (props) => {
-  const {
-    id, mark, showShip, onMouseHover, onClick,
-  } = props;
+  const {id, mark, showShip, onMouseHover, onClick} = props;
 
   const getCellColor = () => {
     if (mark) {
@@ -24,7 +21,8 @@ const Cells = (props) => {
       default:
         if (!showShip) {
           return 'grey';
-        } return 'white';
+        }
+        return 'white';
     }
   };
 
@@ -34,14 +32,14 @@ const Cells = (props) => {
     }
   };
 
-  return (
-    <CellDiv color={getCellColor()} onMouseOver={() => onMouseHover()} onClick={() => handleOnClick()} className="cell" style={{backgroundColor: '(props) => (props.color ? props.color : mark'}}/>
-  );
+  return (<CellComponent
+    color={getCellColor()}
+    onMouseOver={() => onMouseHover()}
+    onClick={() => handleOnClick()}/>);
 };
 
-
 Cells.defaultProps = {
-  mark: false,
+  mark: false
 };
 
 export default Cells;

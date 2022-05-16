@@ -1,11 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React, {useState, useEffect} from 'react';
+import {Link, Navigate} from 'react-router-dom';
+import {connect} from 'react-redux';
 import BoardActions from '../../store/actions/actionTable';
 import GameActions from '../../store/actions/actionGames';
 import Screen from '../../screens/screen';
-import Table from '../../components/molecules/table'; 
-import {GameContainer, GameCpuContainer, AllButton, Label, Feedback, ButtonContainer} from '../screenStyles'
+import Table from '../../components/molecules/table';
+import {
+  GameContainer,
+  GameCpuContainer,
+  AllButton,
+  Label,
+  Feedback,
+  ButtonContainer
+} from '../screenStyles'
 
 const GameScreen = (props) => {
   const {
@@ -21,9 +28,10 @@ const GameScreen = (props) => {
     playerAttack,
     cpuAttack,
     updateCurrentPlayer,
-    updateWinner,
+    updateWinner
   } = props;
-  const [finishGame, setFinishGame] = useState(false);
+  const [finishGame,
+    setFinishGame] = useState(false);
 
   const checkWinner = () => {
     if (shipsCpuCount === 0) {
@@ -69,56 +77,53 @@ const GameScreen = (props) => {
     }
   };
 
-  const renderContent = () => (
-    finishGame ? <Navigate to="/end" push/>
-      : (
-        <div>
-          <GameContainer>
-            <div style={{ flexDirection: 'column' }}>
-              <div style={{ paddingBottom: 10 }}>
-                <Label>{playerName}</Label>
-              </div>
-              <Table cpu={false} click={false} board={playerBoard} />
+  const renderContent = () => (finishGame
+    ? <Navigate to="/end" push/>
+    : (
+      <div>
+        <GameContainer>
+          <div style={{flexDirection: 'column'}}>
+            <div>
+              <Label>{playerName}</Label>
             </div>
-            <GameCpuContainer>
-              <div style={{ paddingBottom: 10 }}>
-                <label>CPU</label>
-              </div>
-              <Table cpu click board={cpuBoard} onClickBoard={(position) => handleClickBoard(position)}/>
-            </GameCpuContainer>
-          </GameContainer>
-          <div>
-            <Feedback>
-              <Label size="1.4em">
-                {attemptFeedback}
-              </Label>
-            </Feedback>
-            <ButtonContainer>
-              <Label size="1.4em">
-                Playing:
-                {' '}
-                {currentPlayer}
-              </Label>
-              <Link to="/end">
-                <AllButton>
-                  Surrender
-                </AllButton>
-              </Link>
-            </ButtonContainer>
+            <Table cpu={false} click={false} board={playerBoard}/>
           </div>
+          <Feedback>
+            <Label>
+              {attemptFeedback}
+            </Label>
+          </Feedback>
+          <GameCpuContainer>
+            <div style={{marginTop: '10px'}}>
+              <Label>
+                CPU
+              </Label>
+            </div>
+            <Table
+              cpu
+              click
+              board={cpuBoard}
+              onClickBoard={(position) => handleClickBoard(position)}/>
+          </GameCpuContainer>
+        </GameContainer>
+        <div>
+          <ButtonContainer>
+            <Label>
+              Shift: {' '}
+              {currentPlayer}
+            </Label>
+          </ButtonContainer>
+          <Link to="/end">
+            <AllButton >
+              Surrender
+            </AllButton>
+          </Link>
         </div>
-      )
-  );
+      </div>
+    ));
 
-  return (
-    <Screen
-      content={
-        renderContent()
-      }
-    />
-  );
+  return (<Screen content={renderContent()}/>);
 };
-
 
 const mapStateToProps = (state) => ({
   playerBoard: state.board.playerBoard,
@@ -128,7 +133,7 @@ const mapStateToProps = (state) => ({
   shipsPlayerCount: state.board.shipsPlayerCount,
   attemptFeedback: state.board.attemptFeedback,
   playerName: state.game.playerName,
-  currentPlayer: state.game.currentPlayer,
+  currentPlayer: state.game.currentPlayer
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -136,10 +141,7 @@ const mapDispatchToProps = (dispatch) => ({
   playerAttack: (args) => dispatch(BoardActions.playerAttack(args)),
   cpuAttack: () => dispatch(BoardActions.cpuAttack()),
   updateCurrentPlayer: () => dispatch(GameActions.updateCurrentPlayer()),
-  updateWinner: (args) => dispatch(GameActions.updateWinner(args)),
+  updateWinner: (args) => dispatch(GameActions.updateWinner(args))
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(GameScreen);
+export default connect(mapStateToProps, mapDispatchToProps,)(GameScreen);

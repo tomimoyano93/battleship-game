@@ -1,14 +1,20 @@
 import {
-  INIT_CPU_BOARD, PLAYER_ATTACK, INIT_EMPTY_BOARD, UPDATE_PLAYER_BOARD, CPU_ATTACK, RESTART, RESTART_SAVED_PLAYER_SHIP,
+  INIT_CPU_BOARD,
+  PLAYER_ATTACK,
+  INIT_EMPTY_BOARD,
+  UPDATE_PLAYER_BOARD,
+  CPU_ATTACK,
+  RESTART,
+  RESTART_SAVED_PLAYER_SHIP
 } from '../actions/action';
-import { NUMBER_OF_SHIP, DIRECTION } from '../../constants/ships';
-import helpers from '../../constants/Utils';
+import {NUMBER_OF_SHIP, DIRECTION} from '../../constants/ships';
+import Utils from '../../constants/Utils';
 
 export const initialState = {
-  cpuBoard: helpers.initEmptyBoard(),
-  playerBoard: helpers.initEmptyBoard(),
+  cpuBoard: Utils.initEmptyBoard(),
+  playerBoard: Utils.initEmptyBoard(),
   shipsCpuCount: 0,
-  shipsPlayerCount: 0, 
+  shipsPlayerCount: 0,
   carriersAvailable: NUMBER_OF_SHIP.CARRIER,
   cruisersAvailable: NUMBER_OF_SHIP.CRUISER,
   submarinesAvailable: NUMBER_OF_SHIP.SUBMARINE,
@@ -16,11 +22,11 @@ export const initialState = {
   cpuCoordinatesAttacked: [],
   lastCpuHit: -1,
   lastCpuDirection: DIRECTION.UP,
-  cpuShips: [], 
+  cpuShips: [],
   playerShips: [],
   savedPlayerShip: false,
   cpuHasTarget: false,
-  attemptFeedback: undefined,
+  attemptFeedback: undefined
 };
 
 export const boardReducer = (state = initialState, action) => {
@@ -30,13 +36,21 @@ export const boardReducer = (state = initialState, action) => {
     case INIT_EMPTY_BOARD:
     case UPDATE_PLAYER_BOARD:
     case PLAYER_ATTACK:
-      return { ...state, ...action.args };
+      return {
+        ...state,
+        ...action.args
+      };
 
     case RESTART:
-      return { ...initialState };
+      return {
+        ...initialState
+      };
 
     case RESTART_SAVED_PLAYER_SHIP:
-      return { ...state, savedPlayerShip: false };
+      return {
+        ...state,
+        savedPlayerShip: false
+      };
     default:
       return state;
   }

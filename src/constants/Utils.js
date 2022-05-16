@@ -6,28 +6,22 @@ import {
   NUMBER_OF_SHIP,
   DIRECTION,
   CELL_ID_VALUE,
-  SHIP_ORIENTATION,
+  SHIP_ORIENTATION
 } from './ships';
-
 
 const initEmptyBoard = () => {
   const board = [];
   for (let i = 0; i < LENGTH_BOARD; i++) {
     const row = [];
     for (let j = 0; j < LENGTH_BOARD; j++) {
-      row.push({
-        id: CELL_ID_VALUE.DEFAULT,
-        code: -1,
-      });
+      row.push({id: CELL_ID_VALUE.DEFAULT, code: -1});
     }
     board.push(row);
   }
   return board;
 };
 
-const isValidPosition = (row, col) => (
-  (row >= 0) && (row < LENGTH_BOARD) && (col >= 0) && (col < LENGTH_BOARD)
-);
+const isValidPosition = (row, col) => ((row >= 0) && (row < LENGTH_BOARD) && (col >= 0) && (col < LENGTH_BOARD));
 
 const freePosition = (row, col, board) => {
   if (isValidPosition(row, col) && (board[row][col].id === CELL_ID_VALUE.DEFAULT)) {
@@ -44,33 +38,35 @@ const checkNeighboringCell = (row, col, board) => {
 };
 
 const freePositionToSaveShip = (row, col, board) => {
-  if (freePosition(row, col, board)
-    && checkNeighboringCell(row - 1, col, board)
-    && checkNeighboringCell(row, col + 1, board)
-    && checkNeighboringCell(row + 1, col, board)
-    && checkNeighboringCell(row, col - 1, board)
-  ) {
+  if (freePosition(row, col, board) && checkNeighboringCell(row - 1, col, board) && checkNeighboringCell(row, col + 1, board) && checkNeighboringCell(row + 1, col, board) && checkNeighboringCell(row, col - 1, board)) {
     return true;
   }
   return false;
 };
-
 
 const getShipPositions = (board, shipSize, row, col, orientation) => {
   const positions = [];
   if (orientation === SHIP_ORIENTATION.HORIZONTAL) {
     for (let y = 0; y < shipSize; y++) {
       if (freePositionToSaveShip(row, col + y, board)) {
-        positions.push({ row, col: col + y });
-      } else return null;
-    }
-  } else {
+        positions.push({
+          row,
+          col: col + y
+        });
+      } else 
+        return null;
+      }
+    } else {
     for (let x = 0; x < shipSize; x++) {
       if (freePositionToSaveShip(row - x, col, board)) {
-        positions.push({ row: row - x, col });
-      } else return null;
+        positions.push({
+          row: row - x,
+          col
+        });
+      } else 
+        return null;
+      }
     }
-  }
   return positions;
 };
 
@@ -91,7 +87,6 @@ const checkCellsToSaveShip = (board, shipSize, row, col, orientation) => {
   return true;
 };
 
-
 const saveShip = (board, ship, size, row, col, orientation) => {
   let updateBoard = board.slice(0);
   if (orientation === SHIP_ORIENTATION.HORIZONTAL) {
@@ -108,40 +103,54 @@ const saveShip = (board, ship, size, row, col, orientation) => {
 
 const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
-
 const createShips = () => {
   const carriers = Array.from({
-    length: NUMBER_OF_SHIP.CARRIER,
+    length: NUMBER_OF_SHIP.CARRIER
   }, (_, index) => ({
-    ...SHIP_TYPE_CARRIER, ...{ code: index },
+    ...SHIP_TYPE_CARRIER,
+    ...{
+      code: index
+    }
   }));
   const cruisers = Array.from({
-    length: NUMBER_OF_SHIP.CRUISER,
+    length: NUMBER_OF_SHIP.CRUISER
   }, (_, index) => ({
-    ...SHIP_TYPE_CRUISER, ...{ code: index + NUMBER_OF_SHIP.CARRIER },
+    ...SHIP_TYPE_CRUISER,
+    ...{
+      code: index + NUMBER_OF_SHIP.CARRIER
+    }
   }));
   const submarines = Array.from({
-    length: NUMBER_OF_SHIP.SUBMARINE,
+    length: NUMBER_OF_SHIP.SUBMARINE
   }, (_, index) => ({
-    ...SHIP_TYPE_SUBMARINE, ...{ code: index + NUMBER_OF_SHIP.CARRIER + NUMBER_OF_SHIP.CRUISER },
+    ...SHIP_TYPE_SUBMARINE,
+    ...{
+      code: index + NUMBER_OF_SHIP.CARRIER + NUMBER_OF_SHIP.CRUISER
+    }
   }));
-  return carriers.concat(cruisers).concat(submarines);
+  return carriers
+    .concat(cruisers)
+    .concat(submarines);
 };
 
 const getRandomDirection = () => {
   if (getRandomInt(1, 2) === 1) {
     return SHIP_ORIENTATION.HORIZONTAL;
-  } return SHIP_ORIENTATION.VERTICAL;
+  }
+  return SHIP_ORIENTATION.VERTICAL;
 };
 
 const getRandomCoordinate = () => getRandomInt(0, LENGTH_BOARD);
-
 
 const initRandomCpuBoard = () => {
   const cpuShips = [];
   const ships = createShips();
   let cpuBoard = initEmptyBoard();
-  let index = 0; let row; let col; let orientation; let freePosition;
+  let index = 0;
+  let row;
+  let col;
+  let orientation;
+  let freePosition;
   let ship;
 
   while (index < NUMBER_OF_SHIP.TOTAL) {
@@ -151,94 +160,84 @@ const initRandomCpuBoard = () => {
     freePosition = checkCellsToSaveShip(cpuBoard, ships[index].size, row, col, orientation);
 
     if (freePosition) {
-      ship = { id: ships[index].id, code: ships[index].code, orientation };
+      ship = {
+        id: ships[index].id,
+        code: ships[index].code,
+        orientation
+      };
       cpuBoard = saveShip(cpuBoard, ship, ships[index].size, row, col, orientation);
       cpuShips[ships[index].code] = ships[index].size;
       index += 1;
     }
   }
 
-  return {
-    cpuBoard,
-    cpuShips,
-  };
+  return {cpuBoard, cpuShips};
 };
 
-
 const updatePlayerBoard = (board, shipData, code) => {
-  const {
-    row,
-    col,
-    ship,
-    orientation,
-  } = shipData;
+  const {row, col, ship, orientation} = shipData;
   const freePosition = checkCellsToSaveShip(board, ship.size, row, col, orientation);
   if (freePosition) {
-    return saveShip(board, { id: ship.id, code, orientation }, ship.size, row, col, orientation);
+    return saveShip(board, {
+      id: ship.id,
+      code,
+      orientation
+    }, ship.size, row, col, orientation);
   }
   return null;
 };
 
-
-const updateShipToDestroyed = (board, code) => board.map((row, x) => (
-  row.map((column, y) => {
-    if (board[x][y].code === code) {
-      return {
-        id: CELL_ID_VALUE.DESTROYED,
-        code,
-      };
-    } return board[x][y];
-  })
-));
-
+const updateShipToDestroyed = (board, code) => board.map((row, x) => (row.map((column, y) => {
+  if (board[x][y].code === code) {
+    return {id: CELL_ID_VALUE.DESTROYED, code};
+  }
+  return board[x][y];
+})));
 
 const attack = (board, row, col, countShips) => {
-  const { id, code, orientation } = board[row][col];
+  const {id, code, orientation} = board[row][col];
   let updateBoard = board.slice(0);
   let shipDestroyed = false;
   if (id === CELL_ID_VALUE.DEFAULT || id === CELL_ID_VALUE.WATER) {
-    updateBoard[row][col] = { id: CELL_ID_VALUE.WATER, code };
-    return {
-      board: updateBoard,
-      hit: false,
-      shipDestroyed,
+    updateBoard[row][col] = {
+      id: CELL_ID_VALUE.WATER,
+      code
     };
-  } if (id !== CELL_ID_VALUE.DESTROYED) {
+    return {board: updateBoard, hit: false, shipDestroyed};
+  }
+  if (id !== CELL_ID_VALUE.DESTROYED) {
     if ((countShips[code] - 1) === 0) {
       updateBoard = updateShipToDestroyed(board, code);
       shipDestroyed = true;
     } else {
       updateBoard[row][col] = {
-        id: CELL_ID_VALUE.HIT, code, orientation, shipId: id,
+        id: CELL_ID_VALUE.HIT,
+        code,
+        orientation,
+        shipId: id
       };
     }
   }
-  return {
-    board: updateBoard,
-    hit: true,
-    shipDestroyed,
-  };
+  return {board: updateBoard, hit: true, shipDestroyed};
 };
-const isValidPositionToShot = (playerBoard, position) => (
-  isValidPosition(position.row, position.col)
-  && playerBoard[position.row][position.col].id !== CELL_ID_VALUE.WATER
-);
+const isValidPositionToShot = (playerBoard, position) => (isValidPosition(position.row, position.col) && playerBoard[position.row][position.col].id !== CELL_ID_VALUE.WATER);
 
 const changeAttackDirection = (playerBoard, orientation, lastCpuHit, numberOfHits, lastCpuDirection) => {
-  let position; let optionalDirection;
+  let position;
+  let optionalDirection;
   if (orientation === SHIP_ORIENTATION.HORIZONTAL) {
     if (lastCpuDirection === DIRECTION.RIGHT) {
       position = {
         row: lastCpuHit.row,
         col: lastCpuHit.col - numberOfHits,
-        direction: DIRECTION.LEFT,
+        direction: DIRECTION.LEFT
       };
       optionalDirection = DIRECTION.UP;
     } else {
       position = {
         row: lastCpuHit.row,
         col: lastCpuHit.col + numberOfHits,
-        direction: DIRECTION.RIGHT,
+        direction: DIRECTION.RIGHT
       };
       optionalDirection = DIRECTION.DOWN;
     }
@@ -246,25 +245,21 @@ const changeAttackDirection = (playerBoard, orientation, lastCpuHit, numberOfHit
     position = {
       row: lastCpuHit.row + numberOfHits,
       col: lastCpuHit.col,
-      direction: DIRECTION.DOWN,
+      direction: DIRECTION.DOWN
     };
     optionalDirection = DIRECTION.RIGHT;
   } else {
     position = {
       row: lastCpuHit.row - numberOfHits,
       col: lastCpuHit.col,
-      direction: DIRECTION.UP,
+      direction: DIRECTION.UP
     };
     optionalDirection = DIRECTION.LEFT;
   }
   if (isValidPositionToShot(playerBoard, position)) {
     return position;
   }
-  return {
-    row: lastCpuHit.row,
-    col: lastCpuHit.col,
-    direction: optionalDirection,
-  };
+  return {row: lastCpuHit.row, col: lastCpuHit.col, direction: optionalDirection};
 };
 
 const getNextRotation = (lastCpuHit, lastCpuDirection) => {
@@ -274,28 +269,28 @@ const getNextRotation = (lastCpuHit, lastCpuDirection) => {
       position = {
         row: lastCpuHit.row,
         col: lastCpuHit.col + 1,
-        direction: DIRECTION.RIGHT,
+        direction: DIRECTION.RIGHT
       };
       break;
     case DIRECTION.RIGHT:
       position = {
         row: lastCpuHit.row + 1,
         col: lastCpuHit.col,
-        direction: DIRECTION.DOWN,
+        direction: DIRECTION.DOWN
       };
       break;
     case DIRECTION.DOWN:
       position = {
         row: lastCpuHit.row,
         col: lastCpuHit.col - 1,
-        direction: DIRECTION.LEFT,
+        direction: DIRECTION.LEFT
       };
       break;
     case DIRECTION.LEFT:
       position = {
         row: lastCpuHit.row - 1,
         col: lastCpuHit.col,
-        direction: DIRECTION.UP,
+        direction: DIRECTION.UP
       };
       break;
     default:
@@ -321,26 +316,26 @@ const getNextPosition = (playerBoard, orientation, lastCpuHit, numberOfHits, las
       position = {
         row: lastCpuHit.row,
         col: lastCpuHit.col + 1,
-        direction: DIRECTION.RIGHT,
+        direction: DIRECTION.RIGHT
       };
     } else {
       position = {
         row: lastCpuHit.row,
         col: lastCpuHit.col - 1,
-        direction: DIRECTION.LEFT,
+        direction: DIRECTION.LEFT
       };
     }
   } else if (lastCpuDirection === DIRECTION.UP) {
     position = {
       row: lastCpuHit.row - 1,
       col: lastCpuHit.col,
-      direction: DIRECTION.UP,
+      direction: DIRECTION.UP
     };
   } else {
     position = {
       row: lastCpuHit.row + 1,
       col: lastCpuHit.col,
-      direction: DIRECTION.DOWN,
+      direction: DIRECTION.DOWN
     };
   }
   if (isValidPositionToShot(playerBoard, position)) {
@@ -379,7 +374,10 @@ const getShipSize = (id) => {
 };
 
 const getRandomBoardPosition = (playerBoard, lastCpuDirection) => {
-  let row; let col; let cellId; let valid = false;
+  let row;
+  let col;
+  let cellId;
+  let valid = false;
   while (!valid) {
     row = getRandomCoordinate();
     col = getRandomCoordinate();
@@ -388,13 +386,8 @@ const getRandomBoardPosition = (playerBoard, lastCpuDirection) => {
       valid = true;
     }
   }
-  return {
-    row,
-    col,
-    direction: lastCpuDirection,
-  };
+  return {row, col, direction: lastCpuDirection};
 };
-
 
 const cpuAttack = (playerBoard, cpuCoordinatesAttacked, lastCpuDirection, lastCpuHit, playerShips, cpuHasTarget) => {
   let attackPosition;
@@ -410,22 +403,19 @@ const cpuAttack = (playerBoard, cpuCoordinatesAttacked, lastCpuDirection, lastCp
       attackPosition = getRandomBoardPosition(playerBoard, lastDir);
     } else {
       const ship = playerBoard[lastCpuHit.row][lastCpuHit.col];
-      attackPosition = getCpuAttackPosition(playerBoard,
-        getShipSize(ship.shipId),
-        playerShips[ship.code],
-        ship.orientation,
-        lastCpuHit,
-        lastDir,
-        cpuHasTarget);
+      attackPosition = getCpuAttackPosition(playerBoard, getShipSize(ship.shipId), playerShips[ship.code], ship.orientation, lastCpuHit, lastDir, cpuHasTarget);
     }
-    const { row, col, direction } = attackPosition;
+    const {row, col, direction} = attackPosition;
     positionAttacked = cpuCoordinatesAttacked.some((coordinate) => coordinate.row === row && coordinate.col === col);
     lastDir = direction;
   } while (positionAttacked);
 
-  const position = { row: attackPosition.row, col: attackPosition.col };
-  const { code } = playerBoard[position.row][position.col];
-  const { board, hit, shipDestroyed } = attack(playerBoard, position.row, position.col, playerShips);
+  const position = {
+    row: attackPosition.row,
+    col: attackPosition.col
+  };
+  const {code} = playerBoard[position.row][position.col];
+  const {board, hit, shipDestroyed} = attack(playerBoard, position.row, position.col, playerShips);
   cpuCoordinates.push(position);
 
   if (shipDestroyed) {
@@ -446,17 +436,17 @@ const cpuAttack = (playerBoard, cpuCoordinatesAttacked, lastCpuDirection, lastCp
     lastCpuHit: lastHit,
     playerShips: ships,
     playerShipDestroyed: shipDestroyed,
-    cpuHasTarget: cpuTarget,
+    cpuHasTarget: cpuTarget
   };
 };
 
-const helpers = {
+const Utils = {
   initEmptyBoard,
   getShipPositions,
   initRandomCpuBoard,
   updatePlayerBoard,
   cpuAttack,
-  attack,
+  attack
 };
 
-export default helpers;
+export default Utils;

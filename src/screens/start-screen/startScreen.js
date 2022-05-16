@@ -8,7 +8,14 @@ import Screen from '../../screens/screen';
 import Table from '../../components/molecules/table';
 import ShipTouch from '../../components/molecules/shipsTouch';
 import {NUMBER_OF_SHIP, SHIP_ORIENTATION} from '../../constants/ships';
-import {Label, StartDiv, TableDiv, AllButton, Input, TableDiv2} from '../screenStyles'
+import {
+  Label,
+  StartDiv,
+  TableDiv,
+  AllButton,
+  Input,
+  TableDiv2
+} from '../screenStyles'
 
 const StartScreen = (props) => {
   const {
@@ -88,9 +95,7 @@ const StartScreen = (props) => {
       : disableButtonOpacity;
     return (
       <div>
-        <div style={{
-          paddingBottom: 30
-        }}>
+        <div style={{marginBottom: '30px'}}>
           {loadShipSelector
             ? (
               <Label>
@@ -128,17 +133,13 @@ const StartScreen = (props) => {
                   type="text"
                   name="Player name"
                   placeholder="Player name"
-                  style={{
-                  height: 30
-                }}/>
+                  style={{height: 30}}/>
                 <Input type="submit" value="Start Game"/>
               </form>
             )}
             <Link to="/game">
               <AllButton
-                style={{
-                opacity: startGameButtonOpacity
-              }}
+                style={{opacity: startGameButtonOpacity}}
                 disabled={!start}>
                 Start Game
               </AllButton>

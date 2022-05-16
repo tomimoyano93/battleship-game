@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Utils from '../../constants/Utils';
 import Cells from './cells';
-
+import {TableCenter, TableCenter2} from './styles'
 
 const Table = (props) => {
   const {
@@ -36,7 +36,7 @@ const Table = (props) => {
   const getBoard = () => {
     let mark;
     const updatedBoard = board.map((row, x) => (
-      <div key={x.toString()} className="row">
+      <TableCenter2 key={x.toString()}>
         {row.map((column, y) => {
           mark = positionsToMark.length > 0 && positionsToMark.findIndex((pos) => pos.row === x && pos.col === y) !== -1;
           return (
@@ -51,15 +51,15 @@ const Table = (props) => {
             </div>
           );
         })}
-      </div>
+      </TableCenter2>
     ));
     return updatedBoard;
   };
 
   return (
-    <div className='container1'>
+    <TableCenter>
       {getBoard()}
-    </div>
+    </TableCenter>
   );
 };
 

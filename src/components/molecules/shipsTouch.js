@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react';
 import {SHIP_TYPE_CARRIER, SHIP_TYPE_CRUISER, SHIP_TYPE_SUBMARINE, SHIP_ORIENTATION} from '../../constants/ships';
 import {RowContainer, Row, Column, ButtonShip, Label2} from './styles'
 
-
 const ShipTouch = (props) => {
   const {
     carriers,
